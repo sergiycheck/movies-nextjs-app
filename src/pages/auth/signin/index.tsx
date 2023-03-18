@@ -29,7 +29,9 @@ export default function LoginPage({
       ...data,
     });
 
-    console.log("res", res);
+    if (res?.ok) {
+      router.push("/");
+    }
   };
 
   return (

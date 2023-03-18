@@ -3,7 +3,6 @@ import {
   cookieStorageManagerSSR,
   localStorageManager,
 } from "@chakra-ui/react";
-import { NextApiRequest } from "next";
 import { theme } from "@/styles/theme";
 
 export function Chakra({
@@ -23,12 +22,4 @@ export function Chakra({
       {children}
     </ChakraProvider>
   );
-}
-
-export function getServerSideProps({ req }: { req: NextApiRequest }) {
-  return {
-    props: {
-      cookies: req.headers.cookie ?? "",
-    },
-  };
 }

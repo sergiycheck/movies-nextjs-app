@@ -4,6 +4,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 export const baseUrl = process.env.WEB_API_URL;
 
+export type SuccessResponse<T> = {
+  data: T;
+  status: number;
+};
+
 export type ErrorResponse = {
   status: number;
   error: { fields: Record<string, string>; code: string };
@@ -37,6 +42,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/signin",
   },
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       id: "credentials_register",

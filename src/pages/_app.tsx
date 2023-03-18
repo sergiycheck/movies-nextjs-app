@@ -6,12 +6,12 @@ import { SessionProvider } from "next-auth/react";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider session={pageProps.session}>
-      <Chakra cookies={pageProps.cookies}>
+    <Chakra cookies={pageProps.cookies}>
+      <SessionProvider session={pageProps.session}>
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </Chakra>
-    </SessionProvider>
+      </SessionProvider>
+    </Chakra>
   );
 }

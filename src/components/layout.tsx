@@ -1,13 +1,40 @@
+import { SessionLocal } from "@/pages/api/auth/[...nextauth]";
 import { Box, Container, Flex } from "@chakra-ui/react";
+import { useSession } from "next-auth/react";
+import { Button1 } from "./buttons";
 import { ColorModeToggler } from "./color-mode";
 import { StyledLink } from "./styled-link";
+import { Text1 } from "./texts";
+import { signOut } from "next-auth/react";
 
 function Navbar() {
+  const { data: session, status } = useSession();
+  const sessionLocal = session as SessionLocal;
+
+  let renderedAuthPart: JSX.Element;
+  if (status === "authenticated") {
+    renderedAuthPart = (
+      <Flex gap="1rem" justifyContent="center" alignItems="center">
+        <Text1>{sessionLocal.user.email}</Text1>
+        <Button1
+          onClick={() => {
+            signOut({ callbackUrl: `${window.location.origin}}/auth/signin` });
+          }}
+        >
+          Sign out
+        </Button1>
+      </Flex>
+    );
+  } else {
+    renderedAuthPart = <StyledLink href="/auth/signin">Sign in</StyledLink>;
+  }
+
   return (
     <Box as="nav">
       <Flex as="ul" align="center" justify="space-around" gap="1rem">
-        <StyledLink href="/">Home</StyledLink>
-        <StyledLink href="/auth/signin">Sign in</StyledLink>
+        <StyledLink href="/">Movies</StyledLink>
+
+        {renderedAuthPart}
         <ColorModeToggler />
       </Flex>
     </Box>
@@ -17,7 +44,7 @@ function Navbar() {
 function Footer() {
   return (
     <Flex as="ul" align="center" justify="center" gap="1rem">
-      <StyledLink href="/">Home</StyledLink>
+      <StyledLink href="/">Movies</StyledLink>
     </Flex>
   );
 }

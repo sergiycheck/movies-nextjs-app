@@ -33,7 +33,9 @@ export default function RegisterPage({
       ...data,
     });
 
-    console.log("res", res);
+    if (res?.ok) {
+      router.push("/");
+    }
   };
 
   return (
