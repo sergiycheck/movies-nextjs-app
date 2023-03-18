@@ -1,6 +1,6 @@
 html,
 body,
 #__next,
-#__next > main {
+main {
   height: 100%;
 }

@@ -1,4 +1,5 @@
 import { Box, Container, Flex } from "@chakra-ui/react";
+import { ColorModeToggler } from "./color-mode";
 import { StyledLink } from "./styled-link";
 
 function Navbar() {
@@ -7,6 +8,7 @@ function Navbar() {
       <Flex as="ul" align="center" justify="space-around" gap="1rem">
         <StyledLink href="/">Home</StyledLink>
         <StyledLink href="/login">Login</StyledLink>
+        <ColorModeToggler />
       </Flex>
     </Box>
   );
