@@ -7,7 +7,7 @@ function Navbar() {
     <Box as="nav">
       <Flex as="ul" align="center" justify="space-around" gap="1rem">
         <StyledLink href="/">Home</StyledLink>
-        <StyledLink href="/login">Login</StyledLink>
+        <StyledLink href="/auth/signin">Sign in</StyledLink>
         <ColorModeToggler />
       </Flex>
     </Box>

@@ -3,15 +3,13 @@ import React from "react";
 
 export const Button1 = React.forwardRef(
   (
-    props: {
-      children: string | JSX.Element | any;
-      other?: ButtonProps | undefined;
-    },
+    props: ButtonProps | (undefined & { children: JSX.Element | string }),
     ref: React.Ref<HTMLButtonElement> | null
   ) => {
+    const { children, ...attrs } = props;
     return (
-      <Button ref={ref} {...props.other}>
-        {props.children}
+      <Button ref={ref} {...attrs}>
+        {children}
       </Button>
     );
   }
