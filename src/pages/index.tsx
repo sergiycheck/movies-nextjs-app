@@ -82,12 +82,18 @@ type MovieLookUpTable = {
 export default function Home({ movies }: { movies?: Movie[] }) {
   const [moviesLookUp, setMoviesLookUp] = React.useState<MovieLookUpTable>({});
 
+  const getMoviesLookupTable = (movies: Movie[]) => {
+    const mooviesTable: MovieLookUpTable = {};
+    movies.forEach((movie) => {
+      mooviesTable[movie.id] = movie;
+    });
+
+    return mooviesTable;
+  };
+
   React.useEffect(() => {
     if (movies && movies.length) {
-      let mooviesTable: MovieLookUpTable = {};
-      movies.forEach((movie) => {
-        mooviesTable[movie.id] = movie;
-      });
+      const mooviesTable = getMoviesLookupTable(movies);
 
       setMoviesLookUp((prev) => {
         return {
@@ -97,7 +103,20 @@ export default function Home({ movies }: { movies?: Movie[] }) {
       });
     }
   }, [movies]);
+
   const [offset, setOffset] = React.useState(10);
+  const [isReset, setIsReset] = React.useState(false);
+  React.useEffect(() => {
+    if (isReset && movies && movies.length) {
+      const mooviesTable = getMoviesLookupTable(movies);
+      setMoviesLookUp((prev) => {
+        return {
+          ...mooviesTable,
+        };
+      });
+      setIsReset(() => false);
+    }
+  }, [isReset, movies]);
   const router = useRouter();
 
   return (
@@ -105,7 +124,23 @@ export default function Home({ movies }: { movies?: Movie[] }) {
       <SharedHead />
       <Box as="main">
         <>
-          <Title1>Movies app</Title1>
+          <Flex justifyContent="space-between">
+            <Title1>Movies app</Title1>
+            <Button1
+              onClick={() => {
+                setOffset(0);
+                setIsReset(true);
+                const nextRoute = `/?${new URLSearchParams({
+                  offset: `${0}`,
+                })}`;
+
+                router.push(nextRoute);
+              }}
+            >
+              Reset
+            </Button1>
+          </Flex>
+
           {Object.values(moviesLookUp)?.map((movie) => {
             return (
               <Box key={movie.id}>
@@ -114,26 +149,6 @@ export default function Home({ movies }: { movies?: Movie[] }) {
             );
           })}
           <Flex justifyContent="center" gap="1rem">
-            <Button1
-              onClick={() => {
-                setOffset((prev) => {
-                  const next = prev - 10;
-                  if (next <= 0) {
-                    return 0;
-                  }
-                  return next;
-                });
-
-                const nextRoute = `/?${new URLSearchParams({
-                  offset: `${offset}`,
-                })}`;
-
-                router.push(nextRoute);
-              }}
-            >
-              load back
-            </Button1>
-
             <Button1
               onClick={() => {
                 setOffset((prev) => prev + 10);
