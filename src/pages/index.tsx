@@ -1,6 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { SharedHead } from "@/components/head";
-import { Text1, Title1 } from "@/components/texts";
+import { Text1 } from "@/components/texts";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import {
@@ -13,6 +13,7 @@ import {
 import React from "react";
 import { Button1 } from "@/components/buttons";
 import { useRouter } from "next/router";
+import { MoviesFilters } from "@/components/features/movies/filters";
 
 export type MovieQueryParams = {
   actor: string;
@@ -124,21 +125,18 @@ export default function Home({ movies }: { movies?: Movie[] }) {
       <SharedHead />
       <Box as="main">
         <>
-          <Flex justifyContent="space-between">
-            <Title1>Movies app</Title1>
-            <Button1
-              onClick={() => {
-                setOffset(0);
-                setIsReset(true);
-                const nextRoute = `/?${new URLSearchParams({
-                  offset: `${0}`,
-                })}`;
-
-                router.push(nextRoute);
-              }}
-            >
-              Reset
-            </Button1>
+          <Flex
+            gap={2}
+            paddingTop={2}
+            paddingBottom={2}
+            alignItems="center"
+            sx={{
+              "@media screen and (max-width: 768px)": {
+                flexDirection: "column",
+              },
+            }}
+          >
+            <MoviesFilters />
           </Flex>
 
           {Object.values(moviesLookUp)?.map((movie) => {

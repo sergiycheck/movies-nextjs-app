@@ -31,19 +31,49 @@ function Navbar() {
 
   return (
     <Box as="nav">
-      <Flex as="ul" align="center" justify="space-around" gap="1rem">
-        <StyledLink href="/">Movies</StyledLink>
+      <Container maxW="1300px">
+        <Flex
+          as="ul"
+          align="center"
+          justify="space-between"
+          gap="1rem"
+          paddingBottom="1rem"
+          paddingTop="1rem"
+          sx={{
+            "@media screen and (max-width: 768px)": {
+              flexDirection: "column",
+            },
+          }}
+        >
+          <StyledLink href="/">Movies</StyledLink>
 
-        {renderedAuthPart}
-        <ColorModeToggler />
-      </Flex>
+          <Flex
+            gap="2rem"
+            sx={{
+              "@media screen and (max-width: 768px)": {
+                flexDirection: "column",
+              },
+            }}
+          >
+            {renderedAuthPart}
+            <ColorModeToggler />
+          </Flex>
+        </Flex>
+      </Container>
     </Box>
   );
 }
 
 function Footer() {
   return (
-    <Flex as="ul" align="center" justify="center" gap="1rem">
+    <Flex
+      as="ul"
+      align="center"
+      justify="center"
+      gap="1rem"
+      paddingBottom="1rem"
+      paddingTop="1rem"
+    >
       <StyledLink href="/">Movies</StyledLink>
     </Flex>
   );
