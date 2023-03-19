@@ -79,8 +79,13 @@ export function getValidatedQuery(query: MovieQueryParams) {
 }
 
 export function MoviesFeed({ accessToken }: { accessToken: string }) {
-  const [prevQueryParams, setPrevQueryParams] =
-    React.useState<MovieQueryParams>({});
+  const prevQueryParams = useBoundMoviesStore(
+    (store) => store.searchFilters.prevQueryParams
+  );
+
+  const setPrevQueryParams = useBoundMoviesStore(
+    (store) => store.searchFilters.setPrevQueryParams
+  );
 
   const queryParams = useBoundMoviesStore(
     (store) => store.searchFilters.queryParams

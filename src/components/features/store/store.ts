@@ -5,10 +5,13 @@ import { devtools } from "zustand/middleware";
 
 export type MoviesState = {
   searchFilters: {
+    prevQueryParams: MovieQueryParams;
+    setPrevQueryParams: (params: MovieQueryParams) => void;
     queryParams: MovieQueryParams;
     setQueryParams: (params: MovieQueryParams) => void;
     loadMore: boolean;
     setLoadMore: (val: boolean) => void;
+    resetQueryParams: () => void;
   };
 };
 
@@ -19,6 +22,15 @@ export const createMoviesSearchSlice: StateCreator<
   MoviesState
 > = (set) => ({
   searchFilters: {
+    prevQueryParams: {},
+    setPrevQueryParams: (params) => {
+      set(
+        produce((state: MoviesState) => {
+          state.searchFilters.prevQueryParams = params;
+        })
+      );
+    },
+
     queryParams: { limit: 5, offset: 0 },
     setQueryParams: (paramsToSet) =>
       set((state) => {
@@ -34,8 +46,16 @@ export const createMoviesSearchSlice: StateCreator<
     loadMore: true,
     setLoadMore: (loadMore) =>
       set(
-        produce((state) => {
+        produce((state: MoviesState) => {
           state.searchFilters.loadMore = loadMore;
+        })
+      ),
+    resetQueryParams: () =>
+      set(
+        produce((state: MoviesState) => {
+          state.searchFilters.queryParams = { offset: 0, limit: 5 };
+          state.searchFilters.loadMore = true;
+          state.searchFilters.prevQueryParams = {};
         })
       ),
   },

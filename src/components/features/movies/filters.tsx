@@ -15,8 +15,13 @@ import { Button1 } from "@/components/buttons";
 
 import { ArrowDownIcon, ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import { Text1 } from "@/components/texts";
+import { useBoundMoviesStore } from "../store/store";
 
 export function MoviesFilters() {
+  const resetQueryParams = useBoundMoviesStore(
+    (store) => store.searchFilters.resetQueryParams
+  );
+
   return (
     <>
       <Flex gap={2} width="100%">
@@ -29,7 +34,7 @@ export function MoviesFilters() {
 
         <Button1
           onClick={() => {
-            // TODO: implement reset
+            resetQueryParams();
           }}
         >
           Reset
