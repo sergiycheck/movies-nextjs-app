@@ -1,12 +1,17 @@
 import { LoginResponse } from "@/components/features/auth/register";
-import NextAuth, { NextAuthOptions } from "next-auth";
+import { endpoints } from "@/endpoints";
+import NextAuth, { NextAuthOptions, Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-export const baseUrl = process.env.WEB_API_URL;
 
 export type SuccessResponse<T> = {
   data: T;
   status: number;
+};
+
+export type SuccessMoviesResponse<T> = SuccessResponse<T> & {
+  meta: {
+    total: number;
+  };
 };
 
 export type ErrorResponse = {
@@ -29,13 +34,13 @@ export type TokenLocal = {
 };
 
 export type SessionLocal = {
+  accessToken: string;
+  expires: string;
   user: {
     name: string | undefined;
     email: string;
     image: string | undefined;
   };
-  expires: string;
-  accessToken: string;
 };
 
 export const authOptions: NextAuthOptions = {
@@ -53,7 +58,7 @@ export const authOptions: NextAuthOptions = {
         confirmPassword: { type: "text" },
       },
       async authorize(credentials, req) {
-        const res = await fetch(`${baseUrl}/users`, {
+        const res = await fetch(endpoints.users.name, {
           method: "POST",
           body: JSON.stringify(credentials),
           headers: { "Content-Type": "application/json" },
@@ -85,7 +90,7 @@ export const authOptions: NextAuthOptions = {
         password: { type: "text" },
       },
       async authorize(credentials, req) {
-        const res = await fetch(`${baseUrl}/sessions`, {
+        const res = await fetch(endpoints.sessions.name, {
           method: "POST",
           body: JSON.stringify(credentials),
           headers: { "Content-Type": "application/json" },

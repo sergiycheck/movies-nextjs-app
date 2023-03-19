@@ -1,3 +1,4 @@
+import React from "react";
 import type { AppProps } from "next/app";
 import Layout from "@/components/layout";
 import { Chakra } from "@/Chakra";
@@ -8,8 +9,8 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "@/styles/globals.css";
-import React from "react";
 
 export function getNewDefaultQueryClient() {
   return new QueryClient({
@@ -37,6 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
               <Component {...pageProps} />
             </Layout>
           </Chakra>
+          <ReactQueryDevtools initialIsOpen={false} />
         </Hydrate>
       </QueryClientProvider>
     </SessionProvider>

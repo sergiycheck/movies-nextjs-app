@@ -1,4 +1,5 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
+import { Text1 } from "./texts";
 
 export function StyledBox1({ children }: { children: JSX.Element }) {
   return (
@@ -15,5 +16,18 @@ export function StyledBox1({ children }: { children: JSX.Element }) {
     >
       {children}
     </Box>
+  );
+}
+
+export function Loading() {
+  return (
+    <Flex
+      justifyContent="center"
+      alignItems="center"
+      flexGrow={1}
+      height="100%"
+    >
+      <Text1>Loading ....</Text1>
+    </Flex>
   );
 }

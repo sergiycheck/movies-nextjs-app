@@ -8,7 +8,12 @@ export const Button1 = React.forwardRef(
   ) => {
     const { children, ...attrs } = props;
     return (
-      <Button ref={ref} {...attrs}>
+      <Button
+        ref={ref}
+        {...attrs}
+        color={attrs.disabled ? "gray.400" : "inherit"}
+        cursor={attrs.disabled ? "not-allowed" : "pointer"}
+      >
         {children}
       </Button>
     );
