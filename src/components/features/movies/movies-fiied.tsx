@@ -22,6 +22,7 @@ export const MovieQueryParamsSchema = z.object({
   title: z.string().max(100),
   search: z.string().max(100),
   sort: z.enum(["id", "title", "year"]),
+  order: z.enum(["ASC", "DESC"]),
   limit: z.number().min(0).max(100),
   offset: z.number().min(0).max(1000),
 });

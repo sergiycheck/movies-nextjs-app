@@ -22,11 +22,37 @@ export function MoviesFilters() {
     (store) => store.searchFilters.resetQueryParams
   );
 
+  const queryParams = useBoundMoviesStore(
+    (store) => store.searchFilters.queryParams
+  );
+
+  const setQueryParams = useBoundMoviesStore(
+    (store) => store.searchFilters.setQueryParams
+  );
+
+  let sort = queryParams.sort ?? "default";
+  if (sort === "id") {
+    sort = "default";
+  }
+  const order = queryParams.order ?? "ASC";
+  const [search, setSearch] = React.useState("");
+
   return (
     <>
       <Flex gap={2} width="100%">
         <InputGroup>
-          <Input placeholder="Search" />
+          <Input
+            placeholder="Search"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setQueryParams({ search });
+              }
+            }}
+          />
           <InputRightElement>
             <SearchIcon />
           </InputRightElement>
@@ -50,12 +76,30 @@ export function MoviesFilters() {
               as={Button1}
               rightIcon={<ChevronDownIcon />}
             >
-              {isOpen ? "Sorting close" : "Sorting open"}
+              {`Sort by ${sort}`}
             </MenuButton>
             <MenuList>
-              <MenuItem>Default</MenuItem>
-              <MenuItem>Title</MenuItem>
-              <MenuItem>Year</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  setQueryParams({ sort: "id" });
+                }}
+              >
+                Default
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  setQueryParams({ sort: "title" });
+                }}
+              >
+                Title
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  setQueryParams({ sort: "year" });
+                }}
+              >
+                Year
+              </MenuItem>
             </MenuList>
           </>
         )}
@@ -70,14 +114,28 @@ export function MoviesFilters() {
               as={Button1}
               rightIcon={<ChevronDownIcon />}
             >
-              {isOpen ? "Order close" : "Order open"}
+              {`Order ${order}`}
             </MenuButton>
             <MenuList>
-              <MenuItem height="10" display="flex" justifyContent="center">
+              <MenuItem
+                height="10"
+                display="flex"
+                justifyContent="center"
+                onClick={() => {
+                  setQueryParams({ order: "ASC" });
+                }}
+              >
                 <ArrowDownIcon transform="rotate(180deg)" />
                 <Text1>ACS</Text1>
               </MenuItem>
-              <MenuItem height="10" display="flex" justifyContent="center">
+              <MenuItem
+                height="10"
+                display="flex"
+                justifyContent="center"
+                onClick={() => {
+                  setQueryParams({ order: "DESC" });
+                }}
+              >
                 <ArrowDownIcon />
                 <Text1>DESC</Text1>
               </MenuItem>
