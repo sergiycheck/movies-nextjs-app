@@ -37,6 +37,13 @@ export function MoviesFilters() {
   const order = queryParams.order ?? "ASC";
   const [search, setSearch] = React.useState("");
 
+  const resetAndSetFilter = () => {
+    resetQueryParams();
+    return (callBack: Function, args: any) => {
+      callBack.call(undefined, args);
+    };
+  };
+
   return (
     <>
       <Flex gap={2} width="100%">
@@ -81,21 +88,21 @@ export function MoviesFilters() {
             <MenuList>
               <MenuItem
                 onClick={() => {
-                  setQueryParams({ sort: "id" });
+                  resetAndSetFilter()(setQueryParams, { sort: "id" });
                 }}
               >
                 Default
               </MenuItem>
               <MenuItem
                 onClick={() => {
-                  setQueryParams({ sort: "title" });
+                  resetAndSetFilter()(setQueryParams, { sort: "title" });
                 }}
               >
                 Title
               </MenuItem>
               <MenuItem
                 onClick={() => {
-                  setQueryParams({ sort: "year" });
+                  resetAndSetFilter()(setQueryParams, { sort: "year" });
                 }}
               >
                 Year
@@ -122,7 +129,7 @@ export function MoviesFilters() {
                 display="flex"
                 justifyContent="center"
                 onClick={() => {
-                  setQueryParams({ order: "ASC" });
+                  resetAndSetFilter()(setQueryParams, { order: "ASC" });
                 }}
               >
                 <ArrowDownIcon transform="rotate(180deg)" />
@@ -133,7 +140,7 @@ export function MoviesFilters() {
                 display="flex"
                 justifyContent="center"
                 onClick={() => {
-                  setQueryParams({ order: "DESC" });
+                  resetAndSetFilter()(setQueryParams, { order: "DESC" });
                 }}
               >
                 <ArrowDownIcon />

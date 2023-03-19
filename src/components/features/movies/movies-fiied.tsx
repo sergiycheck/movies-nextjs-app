@@ -16,6 +16,7 @@ import {
 import axios from "axios";
 import { getLookUpTableFromArr } from "@/utils/lookup-table";
 import { useBoundMoviesStore } from "../store/store";
+import { formatDistance } from "date-fns";
 
 export const MovieQueryParamsSchema = z.object({
   actor: z.string().max(100),
@@ -164,8 +165,21 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
 
       {data?.data?.map((movie) => {
         return (
-          <Box key={movie.id}>
+          <Box key={movie.id} paddingTop={2} paddingBottom={2}>
             <Text1>{movie.title}</Text1>
+            <Text1>{`Format: ${movie.format}`}</Text1>
+            <Text1>{`Year: ${movie.year}`}</Text1>
+            <Text1>{`Created: ${formatDistance(
+              new Date(movie.createdAt),
+              new Date(),
+              { includeSeconds: true, addSuffix: true }
+            )}`}</Text1>
+
+            <Text1>{`Updated: ${formatDistance(
+              new Date(movie.updatedAt),
+              new Date(),
+              { includeSeconds: true, addSuffix: true }
+            )}`}</Text1>
           </Box>
         );
       })}
