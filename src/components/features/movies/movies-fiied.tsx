@@ -15,6 +15,7 @@ import {
 } from "@tanstack/react-query";
 import axios from "axios";
 import { getLookUpTableFromArr } from "@/utils/lookup-table";
+import { useBoundMoviesStore } from "../store/store";
 
 export const MovieQueryParamsSchema = z.object({
   actor: z.string().max(100),
@@ -80,12 +81,17 @@ export function getValidatedQuery(query: MovieQueryParams) {
 export function MoviesFeed({ accessToken }: { accessToken: string }) {
   const [prevQueryParams, setPrevQueryParams] =
     React.useState<MovieQueryParams>({});
-  const [queryParams, setQueryParams] = React.useState<MovieQueryParams>({
-    limit: 5,
-    offset: 0,
-  });
 
-  const [loadMoreDisabled, setLoadMoreDisabled] = React.useState(false);
+  const queryParams = useBoundMoviesStore(
+    (store) => store.searchFilters.queryParams
+  );
+  const setQueryParams = useBoundMoviesStore(
+    (store) => store.searchFilters.setQueryParams
+  );
+  const loadMore = useBoundMoviesStore((store) => store.searchFilters.loadMore);
+  const setLoadMore = useBoundMoviesStore(
+    (store) => store.searchFilters.setLoadMore
+  );
 
   const queryClient = useQueryClient();
 
@@ -130,9 +136,9 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
 
   React.useEffect(() => {
     if (data?.data?.length && data?.data?.length >= data?.meta.total) {
-      setLoadMoreDisabled(() => true);
+      setLoadMore(false);
     }
-  }, [data?.data?.length, data?.meta.total]);
+  }, [data?.data?.length, data?.meta.total, setLoadMore]);
 
   return (
     <>
@@ -159,15 +165,14 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
       })}
       <Flex justifyContent="center" gap="1rem">
         <Button1
-          disabled={loadMoreDisabled}
+          disabled={!loadMore}
           onClick={() => {
-            if (loadMoreDisabled) return;
+            if (!loadMore) return;
 
             setPrevQueryParams(queryParams);
-            setQueryParams((prev) => ({
-              ...prev,
-              offset: prev.offset ? prev.offset + 5 : 5,
-            }));
+            setQueryParams({
+              offset: queryParams.offset ? queryParams.offset + 5 : 5,
+            });
           }}
         >
           load more
