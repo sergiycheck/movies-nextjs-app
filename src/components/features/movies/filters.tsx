@@ -56,6 +56,7 @@ export function MoviesFilters() {
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
+                if (!search) return;
                 setQueryParams({ search });
               }
             }}

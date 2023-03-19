@@ -17,6 +17,8 @@ import axios from "axios";
 import { getLookUpTableFromArr } from "@/utils/lookup-table";
 import { useBoundMoviesStore } from "../store/store";
 import { formatDistance } from "date-fns";
+import { StyledModal } from "@/components/modal";
+import { MovieByIdExcerpt, SingleMovieSharedView } from "./movie-item";
 
 export const MovieQueryParamsSchema = z.object({
   actor: z.string().max(100),
@@ -42,6 +44,19 @@ export const MovieSchema = z.object({
 export type Movie = z.infer<typeof MovieSchema>;
 export type MovieLookUp = { [key: string]: Movie };
 
+export const ActorSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export type Actor = z.infer<typeof ActorSchema>;
+
+export type MovieById = Movie & {
+  actors: Actor[];
+};
+
 export const movieKeys = {
   all: [{ scope: "movies" }] as const,
 
@@ -49,6 +64,9 @@ export const movieKeys = {
 
   list: (sorting: MovieQueryParams) =>
     [{ ...movieKeys.lists()[0], sorting }] as const,
+
+  byId: (byIdParams: { id: number }) =>
+    [{ ...movieKeys.all[0], byIdParams }] as const,
 };
 
 export const fetchMoviesList =
@@ -147,6 +165,10 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
     }
   }, [data?.data?.length, data?.meta.total, setLoadMore]);
 
+  const [selectedMovie, setSelectedMovie] = React.useState<Movie | undefined>(
+    undefined
+  );
+
   return (
     <>
       <Flex
@@ -163,26 +185,25 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
         <MoviesFilters />
       </Flex>
 
-      {data?.data?.map((movie) => {
-        return (
-          <Box key={movie.id} paddingTop={2} paddingBottom={2}>
-            <Text1>{movie.title}</Text1>
-            <Text1>{`Format: ${movie.format}`}</Text1>
-            <Text1>{`Year: ${movie.year}`}</Text1>
-            <Text1>{`Created: ${formatDistance(
-              new Date(movie.createdAt),
-              new Date(),
-              { includeSeconds: true, addSuffix: true }
-            )}`}</Text1>
+      <Flex flexDir="column" gap={2}>
+        {data?.data?.map((movie) => {
+          return (
+            <Box
+              boxShadow="base"
+              p="6"
+              rounded="md"
+              key={movie.id}
+              padding={2}
+              onClick={() => {
+                setSelectedMovie(movie);
+              }}
+            >
+              <SingleMovieSharedView movie={movie} />
+            </Box>
+          );
+        })}
+      </Flex>
 
-            <Text1>{`Updated: ${formatDistance(
-              new Date(movie.updatedAt),
-              new Date(),
-              { includeSeconds: true, addSuffix: true }
-            )}`}</Text1>
-          </Box>
-        );
-      })}
       <Flex justifyContent="center" gap="1rem">
         <Button1
           disabled={!loadMore}
@@ -198,6 +219,23 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
           load more
         </Button1>
       </Flex>
+
+      <StyledModal
+        title="Movie details"
+        isOpen={!!selectedMovie}
+        onClose={() => {
+          setSelectedMovie(undefined);
+        }}
+      >
+        {selectedMovie ? (
+          <MovieByIdExcerpt
+            accessToken={accessToken}
+            movieId={selectedMovie.id}
+          />
+        ) : (
+          <></>
+        )}
+      </StyledModal>
     </>
   );
 }
