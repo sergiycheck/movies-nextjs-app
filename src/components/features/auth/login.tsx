@@ -1,13 +1,6 @@
 import { useForm } from "react-hook-form";
 import { PasswordInput, RegisterData } from "./register";
-import {
-  Flex,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputRightElement,
-} from "@chakra-ui/react";
+import { Flex, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { Button1 } from "@/components/buttons";
 
 export type LoginData = Pick<RegisterData, "email" | "password"> & {
