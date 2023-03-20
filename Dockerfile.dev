@@ -1,0 +1,11 @@
+FROM node:latest AS base
+RUN npm i -g pnpm
+
+FROM base as start
+EXPOSE $PORT
+WORKDIR /home/node/client_app
+COPY package.json pnpm-lock.yaml ./
+COPY . .
+RUN pnpm install
+VOLUME [ "/home/node/client_app" ]
+

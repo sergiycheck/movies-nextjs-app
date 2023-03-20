@@ -4,7 +4,7 @@ services:
   client_app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - 3000:3000
     volumes:
@@ -13,15 +13,4 @@ services:
     environment:
       NEXT_PUBLIC_WEB_API_URL: http://localhost:3050/api/v1
       NEXTAUTH_SECRET: secret_strong_1234_PGBPZP5AS9HVCDSPT7Y2NMSWP4NA4NSLC=value
-  web_api:
-    image: webbylabhub/movies
-    container_name: movies-webbylab-web-api
-    volumes:
-      - movies_mysql:/var/lib/mysql
-    ports:
-      - 3050:3050
-    environment:
-      - PORT=3050
-
-volumes:
-  movies_mysql:
+    command: sh -c './entrypoint.dev.sh'
