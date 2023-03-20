@@ -9,6 +9,7 @@ export const Button1 = React.forwardRef(
     const { children, ...attrs } = props;
     return (
       <Button
+        // @ts-ignore
         ref={ref}
         {...attrs}
         color={attrs.disabled ? "gray.400" : "inherit"}

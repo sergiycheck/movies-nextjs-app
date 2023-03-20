@@ -183,6 +183,7 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
 
   return (
     <>
+      {/*@ts-ignore */}
       <Flex
         gap={2}
         paddingTop={2}
