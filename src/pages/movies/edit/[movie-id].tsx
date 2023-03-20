@@ -1,21 +1,14 @@
 import React from "react";
-import { fetchMovieById } from "@/components/features/movies/movie-item";
-import {
-  MovieById,
-  movieKeys,
-} from "@/components/features/movies/movies-fiied";
+
 import { SharedHead } from "@/components/head";
 import { Loading, StyledBox1 } from "@/components/shared";
-import { Text1, Title1 } from "@/components/texts";
+import { Title1 } from "@/components/texts";
 import { SessionLocal } from "@/pages/api/auth/[...nextauth]";
-import { Box, Flex, FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { Box } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { EditMovie } from "@/components/features/movies/save/edit-movie";
 import z from "zod";
-import { useForm } from "react-hook-form";
-import { Button1 } from "@/components/buttons";
-import { EditMovie } from "@/components/features/movies/edit/edit-movie";
 
 export const movieIdQueryShema = z.object({
   "movie-id": z.string().regex(/^\d+$/).transform(Number),

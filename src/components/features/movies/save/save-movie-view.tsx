@@ -1,10 +1,5 @@
 import React from "react";
-import { fetchMovieById } from "@/components/features/movies/movie-item";
-import {
-  Actor,
-  MovieById,
-  movieKeys,
-} from "@/components/features/movies/movies-fiied";
+import { MovieById } from "@/components/features/movies/movies-fiied";
 import { Text1, Title1 } from "@/components/texts";
 import {
   Alert,
@@ -14,143 +9,17 @@ import {
   FormLabel,
   Input,
 } from "@chakra-ui/react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useForm } from "react-hook-form";
 import { Button1 } from "@/components/buttons";
 import { v4 as uuidv4 } from "uuid";
-import z from "zod";
-import axios from "axios";
-import { SuccessMoviesResponse } from "@/pages/api/auth/[...nextauth]";
-import { endpoints } from "@/endpoints";
 
-export const SaveMovieSchema = z.object({
-  title: z.string().min(0).max(100),
-  year: z.number().min(0).max(11000),
-  format: z.string().min(0).max(100),
-});
-
-export type SaveMovieType = z.infer<typeof SaveMovieSchema>;
-
-export const actorsArrSchema = z.object({
-  actors: z.array(z.string()),
-});
-
-export type EditActorType = Pick<Actor, "name"> & {
-  uniqueId: string;
-};
-
-export type SaveMovieReqBody = SaveMovieType & {
-  actors: string[];
-};
-
-export type EditMoVieByIdArgType = {
-  editActorBody: SaveMovieReqBody;
-  id: number;
-  token: string;
-};
-
-export type MovieByIdOmitActors = Omit<MovieById, "actors">;
-
-export type EditMovieMutationPayload = {
-  formData: SaveMovieType;
-  editingActors: EditActorType[];
-};
-
-export const editMovieById = async ({
-  editActorBody,
-  token,
-  id,
-}: EditMoVieByIdArgType) => {
-  const response = await axios.patch<SuccessMoviesResponse<MovieById>>(
-    endpoints.movies.byId(`${id}`),
-    editActorBody,
-    {
-      headers: {
-        Authorization: token,
-      },
-    }
-  );
-
-  return response.data;
-};
-
-export function EditMovie({
-  movieId,
-  accessToken,
-}: {
-  movieId: number;
-  accessToken: string;
-}) {
-  const { data: dataResult } = useQuery({
-    queryKey: movieKeys.byId({ id: movieId }),
-    queryFn: fetchMovieById(accessToken),
-  });
-
-  const data = dataResult?.data;
-
-  const dataToPassIntoForm = React.useMemo(() => {
-    if (data) {
-      const { actors, ...dataToPassIntoForm } = data;
-      return dataToPassIntoForm;
-    }
-  }, [data]);
-
-  const [editingActors, setEditingActors] = React.useState<
-    EditActorType[] | undefined
-  >();
-
-  React.useEffect(() => {
-    if (data && data?.actors && data.actors.length) {
-      setEditingActors(() => [
-        ...data?.actors.map((actor) => ({
-          name: actor.name,
-          uniqueId: uuidv4(),
-        })),
-      ]);
-    }
-  }, [data]);
-
-  const queryClient = useQueryClient();
-
-  const editMovieByIdMutation = useMutation({
-    mutationFn: editMovieById,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(movieKeys.lists());
-    },
-  });
-
-  const editMovieMutationHandler = (args: EditMovieMutationPayload) => {
-    const { formData, editingActors } = args;
-
-    const payload = {
-      editActorBody: {
-        ...formData,
-        actors: editingActors.length
-          ? editingActors.map((item) => item.name)
-          : [],
-      },
-      token: accessToken,
-      id: dataToPassIntoForm!.id,
-    };
-
-    editMovieByIdMutation.mutate(payload);
-  };
-
-  return (
-    <>
-      <SaveMovieView
-        dataToPassIntoForm={dataToPassIntoForm}
-        editingActors={editingActors}
-        setEditingActors={setEditingActors}
-        saveMovieMutationHandler={editMovieMutationHandler}
-        data={data}
-        isSuccess={editMovieByIdMutation.isSuccess}
-        isError={editMovieByIdMutation.isError}
-      />
-    </>
-  );
-}
+import {
+  EditActorType,
+  EditMovieMutationPayload,
+  MovieByIdOmitActors,
+  SaveMovieType,
+} from "./types";
 
 export const SaveMovieView = (props: {
   dataToPassIntoForm: MovieByIdOmitActors | undefined;
