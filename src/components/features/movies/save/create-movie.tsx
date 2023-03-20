@@ -10,20 +10,19 @@ import axios from "axios";
 import { SuccessMoviesResponse } from "@/pages/api/auth/[...nextauth]";
 import { endpoints } from "@/endpoints";
 import {
+  CreateMovieReqPayload,
   EditActorType,
-  EditMoVieByIdArgType,
   SaveMovieMutationPayload,
 } from "./types";
 import { SaveMovieView } from "./save-movie-view";
 
-export const editMovieById = async ({
-  editMovieBody,
+export const createMovieMutationFn = async ({
+  saveMovieBody,
   token,
-  id,
-}: EditMoVieByIdArgType) => {
-  const response = await axios.patch<SuccessMoviesResponse<MovieById>>(
-    endpoints.movies.byId(`${id}`),
-    editMovieBody,
+}: CreateMovieReqPayload) => {
+  const response = await axios.post<SuccessMoviesResponse<MovieById>>(
+    endpoints.movies.name,
+    saveMovieBody,
     {
       headers: {
         Authorization: token,
@@ -34,46 +33,15 @@ export const editMovieById = async ({
   return response.data;
 };
 
-export function EditMovie({
-  movieId,
-  accessToken,
-}: {
-  movieId: number;
-  accessToken: string;
-}) {
-  const { data: dataResult } = useQuery({
-    queryKey: movieKeys.byId({ id: movieId }),
-    queryFn: fetchMovieById(accessToken),
-  });
-
-  const data = dataResult?.data;
-
-  const dataToPassIntoForm = React.useMemo(() => {
-    if (data) {
-      const { actors, ...dataToPassIntoForm } = data;
-      return dataToPassIntoForm;
-    }
-  }, [data]);
-
+export function CreateMovie({ accessToken }: { accessToken: string }) {
   const [editingActors, setEditingActors] = React.useState<
     EditActorType[] | undefined
   >();
 
-  React.useEffect(() => {
-    if (data && data?.actors && data.actors.length) {
-      setEditingActors(() => [
-        ...data?.actors.map((actor) => ({
-          name: actor.name,
-          uniqueId: uuidv4(),
-        })),
-      ]);
-    }
-  }, [data]);
-
   const queryClient = useQueryClient();
 
-  const editMovieByIdMutation = useMutation({
-    mutationFn: editMovieById,
+  const createMovieMutation = useMutation({
+    mutationFn: createMovieMutationFn,
     onSuccess: (data) => {
       queryClient.invalidateQueries(movieKeys.lists());
     },
@@ -82,30 +50,29 @@ export function EditMovie({
   const editMovieMutationHandler = (args: SaveMovieMutationPayload) => {
     const { formData, editingActors } = args;
 
-    const payload: EditMoVieByIdArgType = {
-      editMovieBody: {
+    const payload: CreateMovieReqPayload = {
+      saveMovieBody: {
         ...formData,
         actors: editingActors.length
           ? editingActors.map((item) => item.name)
           : [],
       },
       token: accessToken,
-      id: dataToPassIntoForm!.id,
     };
 
-    editMovieByIdMutation.mutate(payload);
+    createMovieMutation.mutate(payload);
   };
 
   return (
     <>
       <SaveMovieView
-        dataToPassIntoForm={dataToPassIntoForm}
+        dataToPassIntoForm={undefined}
         editingActors={editingActors}
         setEditingActors={setEditingActors}
         saveMovieMutationHandler={editMovieMutationHandler}
-        data={data}
-        isSuccess={editMovieByIdMutation.isSuccess}
-        isError={editMovieByIdMutation.isError}
+        data={undefined}
+        isSuccess={createMovieMutation.isSuccess}
+        isError={createMovieMutation.isError}
       />
     </>
   );

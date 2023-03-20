@@ -2,6 +2,7 @@ import { Actor, MovieById } from "@/components/features/movies/movies-fiied";
 
 import z from "zod";
 
+// TODO: check format dvd, blu-ray, vhs
 export const SaveMovieSchema = z.object({
   title: z.string().min(0).max(100),
   year: z.number().min(0).max(11000),
@@ -23,14 +24,19 @@ export type SaveMovieReqBody = SaveMovieType & {
 };
 
 export type EditMoVieByIdArgType = {
-  editActorBody: SaveMovieReqBody;
+  editMovieBody: SaveMovieReqBody;
   id: number;
   token: string;
 };
 
 export type MovieByIdOmitActors = Omit<MovieById, "actors">;
 
-export type EditMovieMutationPayload = {
+export type SaveMovieMutationPayload = {
   formData: SaveMovieType;
   editingActors: EditActorType[];
+};
+
+export type CreateMovieReqPayload = {
+  saveMovieBody: SaveMovieReqBody;
+  token: string;
 };

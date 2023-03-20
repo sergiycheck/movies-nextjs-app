@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import {
   EditActorType,
-  EditMovieMutationPayload,
+  SaveMovieMutationPayload,
   MovieByIdOmitActors,
   SaveMovieType,
 } from "./types";
@@ -29,7 +29,7 @@ export const SaveMovieView = (props: {
     React.SetStateAction<EditActorType[] | undefined>
   >;
 
-  saveMovieMutationHandler: (payload: EditMovieMutationPayload) => void;
+  saveMovieMutationHandler: (payload: SaveMovieMutationPayload) => void;
 
   data: MovieById | undefined;
 
@@ -101,10 +101,16 @@ export const SaveMovieView = (props: {
               onClick={() => {
                 if (!newActorName) return;
 
-                setEditingActors((prev) => [
-                  ...prev!,
-                  { uniqueId: uuidv4(), name: newActorName },
-                ]);
+                setEditingActors((prev) => {
+                  if (prev && prev.length) {
+                    return [
+                      ...prev,
+                      { uniqueId: uuidv4(), name: newActorName },
+                    ];
+                  } else {
+                    return [{ uniqueId: uuidv4(), name: newActorName }];
+                  }
+                });
 
                 setNewActorName("");
               }}

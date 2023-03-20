@@ -11,6 +11,8 @@ import { SessionLocal } from "../api/auth/[...nextauth]";
 import { StyledModal } from "@/components/modal";
 import { Button1 } from "@/components/buttons";
 import { Loading } from "@/components/shared";
+import { CreateMovie } from "@/components/features/movies/save/create-movie";
+import { ImportMovies } from "@/components/features/movies/save/import-movies";
 
 export default function Profile() {
   const { data: session, status } = useSession();
@@ -77,28 +79,12 @@ export default function Profile() {
           }}
         >
           {openModalToImportMovies ? (
-            <CreateMovie accessToken={sessionLocal.accessToken} />
+            <ImportMovies accessToken={sessionLocal.accessToken} />
           ) : (
             <></>
           )}
         </StyledModal>
       </Box>
     </>
-  );
-}
-
-export function CreateMovie({ accessToken }: { accessToken: string }) {
-  return (
-    <Box>
-      <Text1>Creating movie</Text1>
-    </Box>
-  );
-}
-
-export function ImportMovies({ accessToken }: { accessToken: string }) {
-  return (
-    <Box>
-      <Text1>Importing movies</Text1>
-    </Box>
   );
 }
