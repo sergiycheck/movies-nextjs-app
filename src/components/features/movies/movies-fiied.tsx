@@ -185,15 +185,15 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
         <MoviesFilters />
       </Flex>
 
-      <Flex flexDir="column" gap={2}>
+      <Flex flexDir="column" gap={2} marginBottom={2}>
         {data?.data?.map((movie) => {
           return (
             <Box
-              boxShadow="base"
-              p="6"
-              rounded="md"
-              key={movie.id}
+              border="1px"
+              borderColor="gray.600"
+              borderRadius={10}
               padding={2}
+              key={movie.id}
               onClick={() => {
                 setSelectedMovie(movie);
               }}

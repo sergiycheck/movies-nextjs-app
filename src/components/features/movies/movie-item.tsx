@@ -1,7 +1,7 @@
 import { Text1 } from "@/components/texts";
 import { endpoints } from "@/endpoints";
 import { SuccessMoviesResponse } from "@/pages/api/auth/[...nextauth]";
-import { Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { formatDistance } from "date-fns";
@@ -44,13 +44,21 @@ export const MovieByIdExcerpt = ({
         <Box>
           <SingleMovieSharedView movie={data} />
           <Text1>Actors:</Text1>
-          {data.actors.map((actor) => (
-            <Box key={actor.id} boxShadow="base" p="6" rounded="md">
-              <Text1>{actor.name}</Text1>
-              <GetDaysAgoText1 name="Created" dateIso={actor.createdAt} />
-              <GetDaysAgoText1 name="Updated" dateIso={actor.updatedAt} />
-            </Box>
-          ))}
+          <Flex flexDir="column" gap={2}>
+            {data.actors.map((actor) => (
+              <Box
+                key={actor.id}
+                padding={2}
+                border="1px"
+                borderColor="gray.600"
+                borderRadius={10}
+              >
+                <Text1>{actor.name}</Text1>
+                <GetDaysAgoText1 name="Created" dateIso={actor.createdAt} />
+                <GetDaysAgoText1 name="Updated" dateIso={actor.updatedAt} />
+              </Box>
+            ))}
+          </Flex>
         </Box>
       ) : (
         <></>

@@ -34,8 +34,8 @@ function Navbar() {
       <Container maxW="1300px">
         <Flex
           as="ul"
-          align="center"
-          justify="space-between"
+          alignItems="center"
+          justifyContent={status === "authenticated" ? "space-between" : "end"}
           gap="1rem"
           paddingBottom="1rem"
           paddingTop="1rem"
@@ -45,10 +45,13 @@ function Navbar() {
             },
           }}
         >
-          <StyledLink href="/">Movies</StyledLink>
+          {status === "authenticated" && (
+            <StyledLink href="/">Movies</StyledLink>
+          )}
 
           <Flex
             gap="2rem"
+            alignItems="center"
             sx={{
               "@media screen and (max-width: 768px)": {
                 flexDirection: "column",
