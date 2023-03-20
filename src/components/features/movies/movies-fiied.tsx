@@ -138,16 +138,29 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
           const oldData = oldDataResp.data;
 
           if (oldData && oldData.length && prevData && prevData.length) {
-            let prevDataLookUp = getLookUpTableFromArr(prevData);
-            let oldDataLookup = getLookUpTableFromArr(oldData);
+            const prevDataLookUp = getLookUpTableFromArr(
+              prevData.map((item) => ({
+                ...item,
+                id: `${item.id}-${item.title}`,
+              }))
+            );
+
+            const oldDataLookup = getLookUpTableFromArr(
+              oldData.map((item) => ({
+                ...item,
+                id: `${item.id}-${item.title}`,
+              }))
+            );
 
             const nextLookup = {
               ...prevDataLookUp,
               ...oldDataLookup,
             };
 
+            const nextData = Object.values(nextLookup);
+
             return {
-              data: Object.values(nextLookup),
+              data: nextData,
               status: oldDataResp.status,
               meta: { total: oldDataResp.meta.total },
             };
