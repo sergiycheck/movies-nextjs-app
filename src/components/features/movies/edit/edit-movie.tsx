@@ -24,13 +24,13 @@ import axios from "axios";
 import { SuccessMoviesResponse } from "@/pages/api/auth/[...nextauth]";
 import { endpoints } from "@/endpoints";
 
-export const EditMovieSchema = z.object({
+export const SaveMovieSchema = z.object({
   title: z.string().min(0).max(100),
   year: z.number().min(0).max(11000),
   format: z.string().min(0).max(100),
 });
 
-export type EditMovieType = z.infer<typeof EditMovieSchema>;
+export type SaveMovieType = z.infer<typeof SaveMovieSchema>;
 
 export const actorsArrSchema = z.object({
   actors: z.array(z.string()),
@@ -40,19 +40,28 @@ export type EditActorType = Pick<Actor, "name"> & {
   uniqueId: string;
 };
 
-export type EditActorRequest = EditMovieType & {
+export type SaveMovieReqBody = SaveMovieType & {
   actors: string[];
+};
+
+export type EditMoVieByIdArgType = {
+  editActorBody: SaveMovieReqBody;
+  id: number;
+  token: string;
+};
+
+export type MovieByIdOmitActors = Omit<MovieById, "actors">;
+
+export type EditMovieMutationPayload = {
+  formData: SaveMovieType;
+  editingActors: EditActorType[];
 };
 
 export const editMovieById = async ({
   editActorBody,
   token,
   id,
-}: {
-  editActorBody: EditActorRequest;
-  id: number;
-  token: string;
-}) => {
+}: EditMoVieByIdArgType) => {
   const response = await axios.patch<SuccessMoviesResponse<MovieById>>(
     endpoints.movies.byId(`${id}`),
     editActorBody,
@@ -90,6 +99,7 @@ export function EditMovie({
   const [editingActors, setEditingActors] = React.useState<
     EditActorType[] | undefined
   >();
+
   React.useEffect(() => {
     if (data && data?.actors && data.actors.length) {
       setEditingActors(() => [
@@ -101,17 +111,6 @@ export function EditMovie({
     }
   }, [data]);
 
-  const [newActorName, setNewActorName] = React.useState("");
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<EditMovieType>({
-    values: dataToPassIntoForm,
-    resetOptions: { keepDirtyValues: true },
-  });
-
   const queryClient = useQueryClient();
 
   const editMovieByIdMutation = useMutation({
@@ -121,21 +120,78 @@ export function EditMovie({
     },
   });
 
-  const onSubmit = handleSubmit((data) => {
-    if (!dataToPassIntoForm || !data || !editingActors) return;
+  const editMovieMutationHandler = (args: EditMovieMutationPayload) => {
+    const { formData, editingActors } = args;
 
     const payload = {
       editActorBody: {
-        ...data,
+        ...formData,
         actors: editingActors.length
           ? editingActors.map((item) => item.name)
           : [],
       },
       token: accessToken,
-      id: dataToPassIntoForm.id,
+      id: dataToPassIntoForm!.id,
     };
 
     editMovieByIdMutation.mutate(payload);
+  };
+
+  return (
+    <>
+      <SaveMovieView
+        dataToPassIntoForm={dataToPassIntoForm}
+        editingActors={editingActors}
+        setEditingActors={setEditingActors}
+        saveMovieMutationHandler={editMovieMutationHandler}
+        data={data}
+        isSuccess={editMovieByIdMutation.isSuccess}
+        isError={editMovieByIdMutation.isError}
+      />
+    </>
+  );
+}
+
+export const SaveMovieView = (props: {
+  dataToPassIntoForm: MovieByIdOmitActors | undefined;
+
+  editingActors: EditActorType[] | undefined;
+  setEditingActors: React.Dispatch<
+    React.SetStateAction<EditActorType[] | undefined>
+  >;
+
+  saveMovieMutationHandler: (payload: EditMovieMutationPayload) => void;
+
+  data: MovieById | undefined;
+
+  isSuccess: boolean;
+  isError: boolean;
+}) => {
+  const {
+    data,
+    dataToPassIntoForm,
+    editingActors,
+    setEditingActors,
+    saveMovieMutationHandler,
+    isSuccess,
+    isError,
+  } = props;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SaveMovieType>({
+    values: dataToPassIntoForm,
+    resetOptions: { keepDirtyValues: true },
+  });
+
+  const [newActorName, setNewActorName] = React.useState("");
+
+  const onSubmit = handleSubmit((formData) => {
+    if (!formData || !editingActors) return;
+
+    saveMovieMutationHandler({ formData, editingActors });
   });
 
   return (
@@ -217,14 +273,14 @@ export function EditMovie({
         </Flex>
       </FormControl>
 
-      {editMovieByIdMutation.isSuccess && (
+      {isSuccess && (
         <Alert status="success">
           <AlertIcon />
           Data is updated!
         </Alert>
       )}
 
-      {editMovieByIdMutation.isError && (
+      {isError && (
         <Alert status="error">
           <AlertIcon />
           Something went wrong!
@@ -232,4 +288,4 @@ export function EditMovie({
       )}
     </Flex>
   );
-}
+};
