@@ -2,10 +2,18 @@ import { Button1 } from "@/components/buttons";
 import { Text1 } from "@/components/texts";
 import { endpoints } from "@/endpoints";
 import { SuccessMoviesResponse } from "@/pages/api/auth/[...nextauth]";
-import { Box, FormControl, Input } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Flex,
+  FormControl,
+  Input,
+} from "@chakra-ui/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
-import { Movie } from "../movies-fiied";
+import { Movie, movieKeys } from "../movies-fiied";
 
 export type ImportMoviesReqPayload = {
   token: string;
@@ -31,18 +39,37 @@ export const importMoviesMutationFn = async ({
 };
 
 export function ImportMovies({ accessToken }: { accessToken: string }) {
+  const queryClient = useQueryClient();
+
+  const [isSuccess, setIsSuccess] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
+
+  const importMovieMutation = useMutation({
+    mutationFn: importMoviesMutationFn,
+    onSuccess: (data) => {
+      if (data.status) {
+        setIsSuccess(true);
+        setIsError(false);
+        queryClient.invalidateQueries(movieKeys.lists());
+      } else {
+        setIsSuccess(false);
+        setIsError(true);
+      }
+    },
+  });
+
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const [dragActive, setDragActive] = React.useState(false);
 
   const [fileName, setFileName] = React.useState("");
+  const [file, setFile] = React.useState<File | null>(null);
 
   const handleFile = (files: FileList) => {
-    console.log(files);
-
     const file = files[0];
 
     setFileName(file.name);
+    setFile(file);
   };
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = function (
@@ -78,9 +105,21 @@ export function ImportMovies({ accessToken }: { accessToken: string }) {
     inputRef?.current?.click();
   };
 
+  const summitFormHandler = () => {
+    const formData = new FormData();
+    formData.append("movies", file as Blob);
+
+    importMovieMutation.mutate({
+      token: accessToken,
+      formData,
+    });
+  };
+
   return (
-    <Box width="100%" height="100%">
-      <Text1>Importing movies</Text1>
+    <Flex width="100%" height="100%" flexDir="column" gap={2}>
+      <Text1>
+        Select text file with only txt extention and approprited format
+      </Text1>
 
       <FormControl
         position="relative"
@@ -99,7 +138,9 @@ export function ImportMovies({ accessToken }: { accessToken: string }) {
         //
         as="form"
         onDragEnter={handleDrag}
-        onSubmit={(e) => e.preventDefault()}
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
       >
         <Input
           ref={inputRef}
@@ -115,7 +156,7 @@ export function ImportMovies({ accessToken }: { accessToken: string }) {
           <Text1>Drag and drop filed here</Text1>
         )}
 
-        <Button1 onClick={() => onButtonClick()}>Upload</Button1>
+        <Button1 onClick={() => onButtonClick()}>Select file</Button1>
 
         {dragActive && (
           <Box
@@ -134,6 +175,30 @@ export function ImportMovies({ accessToken }: { accessToken: string }) {
           ></Box>
         )}
       </FormControl>
-    </Box>
+
+      <Flex justifyContent="end">
+        <Button1
+          onClick={() => {
+            summitFormHandler();
+          }}
+        >
+          Save
+        </Button1>
+      </Flex>
+
+      {isSuccess && (
+        <Alert status="success">
+          <AlertIcon />
+          Movies was imported!
+        </Alert>
+      )}
+
+      {isError && (
+        <Alert status="error">
+          <AlertIcon />
+          Something went wrong!
+        </Alert>
+      )}
+    </Flex>
   );
 }
