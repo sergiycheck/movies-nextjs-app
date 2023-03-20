@@ -14,5 +14,4 @@ RUN pnpm run build
 
 EXPOSE $PORT
 VOLUME [ "/home/node/client_app" ]
-CMD npm run start
 

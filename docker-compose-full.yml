@@ -12,7 +12,7 @@ services:
     restart: always
     environment:
       NEXT_PUBLIC_WEB_API_URL: http://localhost:3050/api/v1
-      NEXTAUTH_SECRET: secret_strong_1234_PGBPZP5AS9HVCDSPT7Y2NMSWP4NA4NSLC=value
+      NEXTAUTH_SECRET: secret_strong_1234_PGBPZP5AS9HVCDSPT7Y2NMSWP4NA4NSLC
   web_api:
     image: webbylabhub/movies
     container_name: movies-webbylab-web-api

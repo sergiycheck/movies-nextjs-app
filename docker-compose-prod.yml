@@ -4,14 +4,15 @@ services:
   client_app:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     ports:
-      - 3000:3000
+      - 3010:3010
     volumes:
       - $PWD/src:/src
     restart: always
     environment:
-      NEXTAUTH_URL: http://127.0.0.1:3000
+      PORT: 3010
+      NEXTAUTH_URL: http://127.0.0.1:3010
       NEXT_PUBLIC_WEB_API_URL: http://localhost:3050/api/v1
       NEXTAUTH_SECRET: secret_strong_1234_PGBPZP5AS9HVCDSPT7Y2NMSWP4NA4NSLC
-    command: sh -c './entrypoint.dev.sh'
+    command: sh -c './entrypoint.prod.sh'
