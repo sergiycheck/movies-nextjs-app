@@ -1,14 +1,28 @@
 import React from "react";
 import { fetchMovieById } from "@/components/features/movies/movie-item";
-import { Actor, movieKeys } from "@/components/features/movies/movies-fiied";
+import {
+  Actor,
+  MovieById,
+  movieKeys,
+} from "@/components/features/movies/movies-fiied";
 import { Text1, Title1 } from "@/components/texts";
-import { Flex, FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import {
+  Alert,
+  AlertIcon,
+  Flex,
+  FormControl,
+  FormLabel,
+  Input,
+} from "@chakra-ui/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useForm } from "react-hook-form";
 import { Button1 } from "@/components/buttons";
-import z from "zod";
 import { v4 as uuidv4 } from "uuid";
+import z from "zod";
+import axios from "axios";
+import { SuccessMoviesResponse } from "@/pages/api/auth/[...nextauth]";
+import { endpoints } from "@/endpoints";
 
 export const EditMovieSchema = z.object({
   title: z.string().min(0).max(100),
@@ -21,8 +35,35 @@ export type EditMovieType = z.infer<typeof EditMovieSchema>;
 export const actorsArrSchema = z.object({
   actors: z.array(z.string()),
 });
+
 export type EditActorType = Pick<Actor, "name"> & {
   uniqueId: string;
+};
+
+export type EditActorRequest = EditMovieType & {
+  actors: string[];
+};
+
+export const editMovieById = async ({
+  editActorBody,
+  token,
+  id,
+}: {
+  editActorBody: EditActorRequest;
+  id: number;
+  token: string;
+}) => {
+  const response = await axios.patch<SuccessMoviesResponse<MovieById>>(
+    endpoints.movies.byId(`${id}`),
+    editActorBody,
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  );
+
+  return response.data;
 };
 
 export function EditMovie({
@@ -71,9 +112,30 @@ export function EditMovie({
     resetOptions: { keepDirtyValues: true },
   });
 
+  const queryClient = useQueryClient();
+
+  const editMovieByIdMutation = useMutation({
+    mutationFn: editMovieById,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(movieKeys.lists());
+    },
+  });
+
   const onSubmit = handleSubmit((data) => {
-    console.log(data);
-    console.log(editingActors);
+    if (!dataToPassIntoForm || !data || !editingActors) return;
+
+    const payload = {
+      editActorBody: {
+        ...data,
+        actors: editingActors.length
+          ? editingActors.map((item) => item.name)
+          : [],
+      },
+      token: accessToken,
+      id: dataToPassIntoForm.id,
+    };
+
+    editMovieByIdMutation.mutate(payload);
   });
 
   return (
@@ -154,6 +216,20 @@ export function EditMovie({
           <Button1 type="submit">Save</Button1>
         </Flex>
       </FormControl>
+
+      {editMovieByIdMutation.isSuccess && (
+        <Alert status="success">
+          <AlertIcon />
+          Data is updated!
+        </Alert>
+      )}
+
+      {editMovieByIdMutation.isError && (
+        <Alert status="error">
+          <AlertIcon />
+          Something went wrong!
+        </Alert>
+      )}
     </Flex>
   );
 }
