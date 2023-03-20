@@ -21,12 +21,7 @@ export function StyledBox1({ children }: { children: JSX.Element }) {
 
 export function Loading() {
   return (
-    <Flex
-      justifyContent="center"
-      alignItems="center"
-      flexGrow={1}
-      height="100%"
-    >
+    <Flex justifyContent="center" alignItems="center" flexGrow={1} minH="100vh">
       <Text1>Loading ....</Text1>
     </Flex>
   );

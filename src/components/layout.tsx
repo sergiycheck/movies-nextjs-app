@@ -15,7 +15,8 @@ function Navbar() {
   if (status === "authenticated") {
     renderedAuthPart = (
       <Flex gap="1rem" justifyContent="center" alignItems="center">
-        <Text1>{sessionLocal.user.email}</Text1>
+        <StyledLink href="/profile">{sessionLocal.user.email}</StyledLink>
+
         <Button1
           onClick={() => {
             signOut({ callbackUrl: `${window.location.origin}}/auth/signin` });
