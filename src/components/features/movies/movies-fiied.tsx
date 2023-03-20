@@ -242,7 +242,8 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
         {selectedMovie ? (
           <MovieByIdExcerpt
             accessToken={accessToken}
-            movieId={selectedMovie.id}
+            selectedMovie={selectedMovie}
+            setSelectedMovie={setSelectedMovie}
           />
         ) : (
           <></>

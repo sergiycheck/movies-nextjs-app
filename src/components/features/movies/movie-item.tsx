@@ -3,7 +3,12 @@ import { Text1 } from "@/components/texts";
 import { endpoints } from "@/endpoints";
 import { SuccessMoviesResponse } from "@/pages/api/auth/[...nextauth]";
 import { Box, Flex } from "@chakra-ui/react";
-import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
+import {
+  QueryFunctionContext,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import axios from "axios";
 import { formatDistance } from "date-fns";
 import { useRouter } from "next/router";
@@ -26,13 +31,36 @@ export const fetchMovieById =
     return response.data;
   };
 
+export const deleteMovieById = async ({
+  token,
+  id,
+}: {
+  id: number;
+  token: string;
+}) => {
+  const response = await axios.delete<SuccessMoviesResponse<undefined>>(
+    endpoints.movies.byId(`${id}`),
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  );
+
+  return response.data;
+};
+
 export const MovieByIdExcerpt = ({
   accessToken,
-  movieId,
+  selectedMovie,
+  setSelectedMovie,
 }: {
   accessToken: string;
-  movieId: number;
+  selectedMovie: Movie;
+  setSelectedMovie: (data: Movie | undefined) => void;
 }) => {
+  const { id: movieId } = selectedMovie;
+
   const router = useRouter();
 
   const { data: dataResult } = useQuery({
@@ -41,6 +69,16 @@ export const MovieByIdExcerpt = ({
   });
 
   const data = dataResult?.data;
+
+  const queryClient = useQueryClient();
+
+  const deleteMovieByIdMutation = useMutation({
+    mutationFn: deleteMovieById,
+    onSuccess: (data) => {
+      setSelectedMovie(undefined);
+      queryClient.invalidateQueries(movieKeys.lists());
+    },
+  });
 
   return (
     <Box>
@@ -56,7 +94,16 @@ export const MovieByIdExcerpt = ({
             >
               Edit
             </Button1>
-            <Button1>Delete</Button1>
+            <Button1
+              onClick={() => {
+                deleteMovieByIdMutation.mutate({
+                  id: movieId,
+                  token: accessToken,
+                });
+              }}
+            >
+              Delete
+            </Button1>
           </Flex>
 
           <Text1>Actors:</Text1>
