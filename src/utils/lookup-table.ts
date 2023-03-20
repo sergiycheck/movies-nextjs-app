@@ -1,12 +1,12 @@
 export type LookUpdatype<EntityType> = { [key: string]: EntityType };
 
 export function getLookUpTableFromArr<
-  ProvidedEntity extends { id: string | number }
+  ProvidedEntity extends { idUnique: string | number }
 >(arr: ProvidedEntity[]) {
   const lookUpTable: LookUpdatype<ProvidedEntity> = {};
 
   arr.forEach((item) => {
-    lookUpTable[item.id] = item;
+    lookUpTable[item.idUnique] = item;
   });
 
   return lookUpTable;

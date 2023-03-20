@@ -141,14 +141,14 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
             const prevDataLookUp = getLookUpTableFromArr(
               prevData.map((item) => ({
                 ...item,
-                id: `${item.id}-${item.title}`,
+                idUnique: `${item.id}-${item.title}`,
               }))
             );
 
             const oldDataLookup = getLookUpTableFromArr(
               oldData.map((item) => ({
                 ...item,
-                id: `${item.id}-${item.title}`,
+                idUnique: `${item.id}-${item.title}`,
               }))
             );
 
