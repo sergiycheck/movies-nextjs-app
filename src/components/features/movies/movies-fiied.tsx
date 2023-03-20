@@ -16,7 +16,6 @@ import {
 import axios from "axios";
 import { getLookUpTableFromArr } from "@/utils/lookup-table";
 import { useBoundMoviesStore } from "../store/store";
-import { formatDistance } from "date-fns";
 import { StyledModal } from "@/components/modal";
 import { MovieByIdExcerpt, SingleMovieSharedView } from "./movie-item";
 

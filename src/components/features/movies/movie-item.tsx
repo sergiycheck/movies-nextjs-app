@@ -1,3 +1,4 @@
+import { Button1 } from "@/components/buttons";
 import { Text1 } from "@/components/texts";
 import { endpoints } from "@/endpoints";
 import { SuccessMoviesResponse } from "@/pages/api/auth/[...nextauth]";
@@ -5,6 +6,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { formatDistance } from "date-fns";
+import { useRouter } from "next/router";
 import { Movie, MovieById, movieKeys } from "./movies-fiied";
 
 export const fetchMovieById =
@@ -31,6 +33,8 @@ export const MovieByIdExcerpt = ({
   accessToken: string;
   movieId: number;
 }) => {
+  const router = useRouter();
+
   const { data: dataResult } = useQuery({
     queryKey: movieKeys.byId({ id: movieId }),
     queryFn: fetchMovieById(accessToken),
@@ -41,8 +45,20 @@ export const MovieByIdExcerpt = ({
   return (
     <Box>
       {data ? (
-        <Box>
+        <Flex flexDir="column" gap={2}>
           <SingleMovieSharedView movie={data} />
+
+          <Flex gap={2}>
+            <Button1
+              onClick={() => {
+                router.push(`/movies/edit/${movieId}`);
+              }}
+            >
+              Edit
+            </Button1>
+            <Button1>Delete</Button1>
+          </Flex>
+
           <Text1>Actors:</Text1>
           <Flex flexDir="column" gap={2}>
             {data.actors.map((actor) => (
@@ -59,7 +75,7 @@ export const MovieByIdExcerpt = ({
               </Box>
             ))}
           </Flex>
-        </Box>
+        </Flex>
       ) : (
         <></>
       )}
