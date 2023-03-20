@@ -1,11 +1,9 @@
 import React from "react";
-import { fetchMovieById } from "@/components/features/movies/movie-item";
 import {
   MovieById,
   movieKeys,
 } from "@/components/features/movies/movies-fiied";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { v4 as uuidv4 } from "uuid";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { SuccessMoviesResponse } from "@/pages/api/auth/[...nextauth]";
 import { endpoints } from "@/endpoints";
