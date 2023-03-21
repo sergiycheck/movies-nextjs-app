@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  web-api:
+    image: webbylabhub/movies
+    container_name: movies-webbylab-web-api
+    volumes:
+      - movies_mysql:/var/lib/mysql
+    ports:
+      - 3050:3050
+    environment:
+      - PORT=3050
+
+volumes:
+  movies_mysql:
