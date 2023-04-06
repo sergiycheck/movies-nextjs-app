@@ -1,13 +1,19 @@
-import { Text } from "@chakra-ui/react";
+import { ComponentWithAs, Text, TextProps } from "@chakra-ui/react";
 
-export function Text1({ children }: { children: string }) {
-  return <Text fontSize="sm">{children}</Text>;
-}
-
-export function Title1({ children }: { children: string }) {
+export const Text1: ComponentWithAs<"p", TextProps> = (props) => {
+  const { children, ...propsToPass } = props;
   return (
-    <Text fontSize="3xl" as="h1">
+    <Text fontSize="sm" {...propsToPass}>
       {children}
     </Text>
   );
-}
+};
+
+export const Title1: ComponentWithAs<"p", TextProps> = (props) => {
+  const { children, ...propsToPass } = props;
+  return (
+    <Text fontSize="3xl" as="h1" {...propsToPass}>
+      {children}
+    </Text>
+  );
+};

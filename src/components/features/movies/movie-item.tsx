@@ -133,7 +133,7 @@ export const MovieByIdExcerpt = ({
 export const SingleMovieSharedView = ({ movie }: { movie: Movie }) => {
   return (
     <>
-      <Text1>{movie.title}</Text1>
+      <Text1 fontWeight="bold">{movie.title}</Text1>
       <Text1>{`Format: ${movie.format}`}</Text1>
       <Text1>{`Year: ${movie.year}`}</Text1>
       <GetDaysAgoText1 name="Created" dateIso={movie.createdAt} />
