@@ -198,10 +198,22 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
         <MoviesFilters />
       </Flex>
 
-      <Flex flexDir="column" gap={2} marginBottom={2}>
+      <Flex
+        flexDir="row"
+        flexWrap="wrap"
+        gap={2}
+        marginBottom={2}
+        justifyContent="center"
+      >
         {data?.data?.map((movie) => {
           return (
             <Box
+              flexBasis="32.9%"
+              sx={{
+                "@media screen and (max-width: 768px)": {
+                  flexBasis: "100%",
+                },
+              }}
               border="1px"
               borderColor="gray.600"
               borderRadius={10}
