@@ -1,5 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
-import { Text1 } from "@/components/texts";
+import { Box, Flex, Grid } from "@chakra-ui/react";
 
 import { SuccessMoviesResponse } from "@/pages/api/auth/[...nextauth]";
 
@@ -198,7 +197,11 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
         <MoviesFilters />
       </Flex>
 
-      <Flex flexDir="column" gap={2} marginBottom={2}>
+      <Grid
+        templateColumns="repeat( auto-fill, minmax(200px, 1fr) )"
+        gap={2}
+        marginBottom={2}
+      >
         {data?.data?.map((movie) => {
           return (
             <Box
@@ -215,7 +218,7 @@ export function MoviesFeed({ accessToken }: { accessToken: string }) {
             </Box>
           );
         })}
-      </Flex>
+      </Grid>
 
       <Flex justifyContent="center" gap="1rem">
         <Button1
